@@ -3,13 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace WebApi_Upg1.Models
+namespace BlazorUpg1.Models
 {
-    public class Register
+    public class Customer
     {
+        public int Id { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Email { get; set; }
-        public string Password { get; set; }
+
+        public string DisplayName => $"{FirstName} {LastName}";
+
+        public virtual ICollection<Case> Cases { get; set; }
     }
 }

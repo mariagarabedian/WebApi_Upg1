@@ -10,7 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using WebApi_Upg1.Data;
 using WebApi_Upg1.Entities;
-using WebApi_Upg1.Models;
+using SharedLibrary;
 
 namespace WebApi_Upg1.Services
 {

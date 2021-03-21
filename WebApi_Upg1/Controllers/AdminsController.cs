@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using WebApi_Upg1.Models;
+using SharedLibrary;
 using WebApi_Upg1.Services;
 
 namespace WebApi_Upg1.Controllers

@@ -1,0 +1,66 @@
+﻿@page "/createcase"
+<Auth/>
+<h1 class="container font-weight-bold mb-4">Create a Case</h1>
+
+<EditForm Model="model" OnValidSubmit="CreateCaseAsync">
+    <div class="my-5">
+        <div class="container">
+            <h3 class="title">Case</h3>
+            <div class="form-row">
+                <div class="col-md-6 mb-3">
+                    <label>Customer Id</label>
+                    <input type="text" class="form-control" @bind="model.CustomerId" id="customerid" />
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label>Admin Id</label>
+                    <input type="text" class="form-control" @bind="model.AdministratorId" id="adminid" />
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="col-md-6 mb-3">
+                    <label>Case date</label>
+                    <input class="form-control" type="date" @bind="model.CaseDate" id="casedate" />
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label>Status</label>
+                    <select class="form-control" @bind="model.CaseStatus">
+                        <option value="null" disabled selected hidden>Choose status....</option>
+                        <option value="Pending">Pending</option>
+                        <option value="Active">Active</option>
+                        <option value="Closed">Closed</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="col-md-6 mb-3">
+                    <textarea type="text" class="form-control" rows="5" @bind="model.CaseDescription" placeholder="Description" id="description" />
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="col-md-6 mb-3">
+                    <button class="btn btn-dark btn-block" type="submit">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</EditForm>
+
+@code {
+    private Case model;
+
+    protected override void OnInitialized()
+    {
+        model = new Case();
+    }
+
+    private async Task CreateCaseAsync()
+    {
+        if (!Http.DefaultRequestHeaders.Any()) { Http.DefaultRequestHeaders.Add("Authorization", $"Bearer {await sessionStorage.GetItemAsync<string>("accessToken")}"); }
+        var response = await Http.PostAsJsonAsync<Case>("https://localhost:44393/api/cases", model);
+
+        model = new Case();
+    }
+
+
+
+}

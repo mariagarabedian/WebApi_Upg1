@@ -8,10 +8,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebApi_Upg1.Data;
 using WebApi_Upg1.Entities;
+using SharedLibrary;
 
 namespace WebApi_Upg1.Controllers
 {
-   // [Authorize]
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class CasesController : ControllerBase
@@ -31,8 +32,7 @@ namespace WebApi_Upg1.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Case>>> GetCases()
         {
-
-            return await _context.Cases.ToListAsync();
+            return await _context.Cases.Include(c => c.Customer).Include(c => c.Administrator).ToListAsync();
         }
 
          
@@ -71,7 +71,7 @@ namespace WebApi_Upg1.Controllers
         [HttpGet("date")]
         public async Task<ActionResult<IEnumerable<Case>>> GetCaseDate(DateTime date)
         {
-            var @case = await _context.Cases.Where(x => x.CaseDate == date).ToListAsync();
+            var @case = await _context.Cases.OrderBy(x => x.CaseDate <= date).ToListAsync();
 
             if (@case == null)
             {
@@ -88,9 +88,10 @@ namespace WebApi_Upg1.Controllers
         public async Task<ActionResult<IEnumerable<Case>>> GetCaseCustomer(int id)
         {
             var @case = await _context.Cases.Where(x => x.CustomerId == id).ToListAsync();
-            //foreach(var issue in @case)
+
+            //foreach (var issue in @case)
             //{
-            //    var admin = _context.Administrators.FirstOrDefault(x => x.Id == issue.AdministratorId);
+            //    var admin = _context.Administrators.FirstOrDefault(x => x.DisplayName == issue.Administrator.DisplayName);
             //    issue.Administrator = admin;
             //}
 
@@ -107,6 +108,7 @@ namespace WebApi_Upg1.Controllers
 
         // PUT: api/Cases/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [AllowAnonymous]
         [HttpPut("{id}")]
         public async Task<IActionResult> PutCase(int id, Case @case)
         {

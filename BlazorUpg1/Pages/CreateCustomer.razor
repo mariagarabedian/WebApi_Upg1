@@ -1,0 +1,88 @@
+﻿@page "/createcustomer"
+<Auth />
+<h1 class="container font-weight-bold mb-4">Create a Customer</h1>
+
+<EditForm Model="model" OnValidSubmit="CreateCustomerAsync">
+    <div class="my-5">
+        <div class="container">
+            <h2 class="title">Customer</h2>
+
+            <div class="form-row">
+                <div class="col-md-6 mb-3">
+                    <input type="text" class="form-control" @bind="model.FirstName" placeholder="First name" id="firstname" />
+                </div>
+                <div class="col-md-6 mb-3">
+                    <input type="text" class="form-control" @bind="model.LastName" placeholder="Last name" id="lastname" />
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="col-md-6 mb-3">
+                    <input type="email" class="form-control" @bind="model.Email" placeholder="Email adress" id="email" />
+                </div>
+            </div>
+            <button class="btn btn-dark btn-block" type="submit">Submit</button>
+
+        </div>
+    </div>
+</EditForm>
+
+<div class="container">
+    <h2>Customer List</h2>
+    @if (customers == null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else
+    {
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Customer name</th>
+                    <th>Email</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var customer in customers)
+                {
+                    <tr>
+                        <td>@customer.Id</td>
+                        <td>@customer.DisplayName</td>
+                        <td>@customer.Email</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>
+
+
+@code {
+    private Customer model;
+    private IEnumerable<Customer> customers;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        model = new Customer();
+
+        try
+        {
+            if (!Http.DefaultRequestHeaders.Any()) { Http.DefaultRequestHeaders.Add("Authorization", $"Bearer {await sessionStorage.GetItemAsync<string>("accessToken")}"); }
+            customers = await Http.GetFromJsonAsync<IEnumerable<Customer>>("https://localhost:44393/api/customers");
+        }
+        catch { }
+
+    }
+
+    private async Task CreateCustomerAsync()
+    {
+        if (!Http.DefaultRequestHeaders.Any()) { Http.DefaultRequestHeaders.Add("Authorization", $"Bearer {await sessionStorage.GetItemAsync<string>("accessToken")}"); }
+        var response = await Http.PostAsJsonAsync<Customer>("https://localhost:44393/api/customers", model);
+
+        model = new Customer();
+
+    }
+
+
+}

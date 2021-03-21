@@ -21,6 +21,7 @@ namespace WebApi_Upg1.Entities
         public byte[] AdminHash { get; set; }
         public byte[] AdminSalt { get; set; }
 
+        public string DisplayName => $"{FirstName} {LastName}";
         public virtual ICollection<Case> Cases { get; set; }
 
         public void CreatePasswordHash(string password)
